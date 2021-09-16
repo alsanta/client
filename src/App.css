@@ -13,3 +13,8 @@
   align-items: center;
   margin: 0 auto;
 }
+
+.displayInfo{
+  text-align: center;
+  margin-top: 20px;
+}
