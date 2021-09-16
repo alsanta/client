@@ -1,30 +1,24 @@
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import axios from 'axios';
 import {
   BrowserRouter,
   Switch,
   Route,
-  Link
+  // Link
 } from "react-router-dom"
-import Products from './Products';
+import Products from './components/Products';
+import ProductList from './components/ProductList';
+import Edit from './components/Edit';
 
 function App() {
-  const [allProducts, setAllProducts] = useState([]);
   const [formInfo, setFormInfo] = useState({
     title: null,
     price: null,
     description: null
   })
 
-  useEffect(() => {
-    axios.get("http://localhost:8000/api/products")
-      .then(res => {
-        // console.log(res);
-        setAllProducts(res.data.results);
-      })
-      .catch()
-  }, []);
+  const [addClicked,setAddClicked] = useState(false)
 
   const changeHandler = (e) => {
     setFormInfo({
@@ -35,15 +29,10 @@ function App() {
   const submitHandler = (e) => {
     e.preventDefault();
     axios.post("http://localhost:8000/api/products", formInfo)
-      .then(res => {
-        res.json(res);
+      .then(res=>{
+        setAddClicked(!addClicked)
       })
       .catch(err => console.log(err))
-    setFormInfo({
-      title: null,
-      price: null,
-      description: null
-    })
   }
 
   return (
@@ -60,18 +49,13 @@ function App() {
             </form>
           </div>
           <hr />
-          <div>
-            {
-              allProducts.map((products, idx) => {
-                return <ul key={idx} className="formInfo">
-                  <li><Link to={`/${products._id}`} >{products.title}</Link></li>
-                </ul>
-              })
-            }
-          </div>
+          <ProductList addClicked={addClicked}></ProductList>
         </Route>
         <Route exact path="/:id">
           <Products></Products>
+        </Route>
+        <Route exact path="/edit/:id">
+          <Edit></Edit>
         </Route>
       </Switch>
     </BrowserRouter>
